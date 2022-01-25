@@ -1,7 +1,10 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const res = require('express/lib/response');
 const app = express();
 const PORT = 8080;
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 
 const urlDatabase = {
@@ -18,9 +21,15 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+app.post('/urls', (req, res) => {
+  console.log(req.body);
+  res.send('OK');
+});
+
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
+
 
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
@@ -37,3 +46,7 @@ app.get('/urls.json', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
+
+function generateRandomString() {
+  return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
+}
