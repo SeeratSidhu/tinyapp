@@ -37,6 +37,17 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if (!emailLookup(email)) {
+    return res.status(403).send('Email not found. Please register for a new account.');
+  }
+
+  const user = emailLookup(email);
+  if ( user.password !== password) {
+    return res.status(403).send('Incorrect password!');
+  }
+  res.cookie('user_id', user.id);
   res.redirect('/urls');
 });
 
@@ -135,7 +146,7 @@ function emailLookup(email) {
   for (let user_id in users) {
     const userEmail = users[user_id].email;
     if (userEmail === email) {
-      return true;
+      return users[user_id];
     }
   }
   return false;
