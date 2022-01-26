@@ -10,9 +10,16 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+      longURL: "https://www.tsn.ca",
+      userID: "aJ48lW"
+  },
+  i3BoGr: {
+      longURL: "https://www.google.ca",
+      userID: "aJ48lW"
+  }
 };
+
 
 const users = { 
   "userRandomID": {
@@ -65,8 +72,16 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
+  if (!req.cookies["user_id"]) {
+    return res.status(403).send("Please login to add a new URL");
+  }
+
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: req.cookies["user_id"]
+  };
+  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -98,6 +113,9 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
+  if (!req.cookies["user_id"]) {
+    res.redirect('/login');
+  }
   const templateVars = { user: users[req.cookies["user_id"]] }
   res.render('urls_new', templateVars);
 });
@@ -106,12 +124,13 @@ app.get('/urls/new', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies["user_id"]]
   };
   res.render('urls_show', templateVars);
 });
 
+//update the longURL for a given shortURL
 app.post('/urls/:shortURL', (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect('/urls');
@@ -122,8 +141,9 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+//shortened link to redirect to the longURL
 app.get('/u/:shortURL', (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL].longURL;
   if (!longURL.includes('http://')) {
     longURL = 'http://' + longURL;
   }
@@ -138,6 +158,7 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
 
+//helper functions
 function generateRandomString() {
   return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
 };
