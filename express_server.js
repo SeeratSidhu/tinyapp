@@ -14,6 +14,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
@@ -24,14 +37,14 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
 app.get('/urls', (req, res) => {
   const templateVars = { 
     urls: urlDatabase,
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render('urls_index', templateVars);
 });
@@ -42,9 +55,35 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.get('/register', (req, res) => {
+  const templateVars = { user: users[req.cookies["user_id"]] }
+  res.render('register', templateVars);
+});
+
+app.post('/register', (req, res) => {
+  const id = generateRandomString();
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+   return res.status(400).send("Please enter both email and password");
+  }
+
+  if (emailLookup(email)) {
+    return res.status(400).send("This email already exists! ");
+  }
+
+  users[id] = {
+    id,
+    email,
+    password
+  }
+  console.log(users);
+  res.cookie('user_id', id);
+  res.redirect('/urls');
+});
 
 app.get('/urls/new', (req, res) => {
-  const templateVars = { username: req.cookies["username"] }
+  const templateVars = { user: users[req.cookies["user_id"]] }
   res.render('urls_new', templateVars);
 });
 
@@ -53,7 +92,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render('urls_show', templateVars);
 });
@@ -86,4 +125,14 @@ app.listen(PORT, () => {
 
 function generateRandomString() {
   return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
-}
+};
+
+function emailLookup(email) {
+  for (let user_id in users) {
+    const userEmail = users[user_id].email;
+    if (userEmail === email) {
+      return true;
+    }
+  }
+  return false;
+};
