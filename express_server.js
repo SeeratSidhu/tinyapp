@@ -8,7 +8,7 @@ const app = express();
 const PORT = 8080;
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.set("trust proxy", true);
+
 app.use(cookieSession({
   name: 'session',
   keys: ["S1mpl!city-k3y", "key2"]
@@ -29,14 +29,17 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  
+  if (!email || !password) {
+    return res.status(400).render('error_message', {message: "Please enter both email and password", url: req.header('Referer')});
+  }
+
   if (!getUserByEmail(email, users)) {
-    return res.status(403).send('Email not found. Please register for a new account.');
+  return res.status(403).render('error_message', {message: 'Email not found. Please register for a new account.', url: req.header('Referer')});
   }
 
   const user = getUserByEmail(email, users);
   if (!bcrypt.compareSync(password, user.password)) {
-    return res.status(403).send('Incorrect password!');
+    return res.status(403).render('error_message', {message: 'Incorrect Password', url: req.header('Referer')});
   }
   req.session.user_id = user.id;
   console.log(req.session.user_id);
@@ -75,7 +78,7 @@ app.post('/urls', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const templateVars = { user: users[req.session.user_id] }
+  const templateVars = { user: users[req.session.user_id]}
   res.render('register', templateVars);
 });
 
@@ -85,11 +88,11 @@ app.post('/register', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-   return res.status(400).send("Please enter both email and password");
+   return res.status(400).render('error_message', {message: "Please enter both email and password", url: req.header('Referer')});
   }
 
   if (getUserByEmail(email, users)) {
-    return res.status(400).send("This email already exists! ");
+    return res.status(400).render('error_message', {message: "This email already exists!", url: req.header('Referer')});
   }
 
   users[id] = {
@@ -130,12 +133,14 @@ app.get('/urls/:shortURL', (req, res) => {
 //update the longURL for a given shortURL
 app.post('/urls/:shortURL', (req, res) => {
   const urls = urlsForUser(req.session.user_id, urlDatabase);
-  if (!req.body.longURL) {
-    return res.send("Please enter a URL to update");
-  }
   if (!urls[req.params.shortURL]) {
     return res.status(403).send("Oops! 🚫You cannot update this URL!🚫");
   }
+
+  if (!req.body.longURL) {
+    return res.render("error_message", {message: "Please enter a URL to update", url: req.header('Referer')});
+  }
+    
   urlDatabase[req.params.shortURL] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
@@ -155,7 +160,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 //shortened link to redirect to the longURL
 app.get('/u/:shortURL', (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
-    return res.status(404).render('error_message', {message: 'Invalid URL', url: '/urls'});
+    return res.status(404).render('error_message', {message: 'Invalid URL. Please check the web address and try again.', url: '/urls'});
   }
   let longURL = urlDatabase[req.params.shortURL].longURL;
   if (!longURL.includes('http://')) {
