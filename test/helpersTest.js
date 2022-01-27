@@ -4,13 +4,13 @@ const { generateRandomString, getUserByEmail, urlsForUser } = require('../helper
 
 const testUsers = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
   "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
@@ -20,7 +20,7 @@ const testUrls = {
     longURL: "https://www.tsn.ca",
     userID: "aJ48lW"
   },
-i3BoGr: {
+  i3BoGr: {
     longURL: "https://www.google.ca",
     userID: "aJ48lW"
   }
@@ -28,7 +28,7 @@ i3BoGr: {
 
 describe('getUserByEmail', () => {
   it('should return a user with valid email', () => {
-    const user = getUserByEmail('user@example.com', testUsers)
+    const user = getUserByEmail('user@example.com', testUsers);
     const expectedUserID = 'userRandomID';
     
     expect(user).to.deep.equal(testUsers[expectedUserID]);
@@ -50,7 +50,7 @@ describe('urlsForUser', () => {
   it('should return long urls corresponding to the user with given userid', () => {
     const urls = urlsForUser("aJ48lW", testUrls);
     const expectedUrlID = "i3BoGr";
-    expect(urls[expectedUrlID]).to.equal(testUrls[expectedUrlID].longURL)
+    expect(urls[expectedUrlID]).to.equal(testUrls[expectedUrlID].longURL);
   });
 
   it("should return empty object if no url are found", () => {

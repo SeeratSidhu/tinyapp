@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const templateVars = { user: users[req.session.user_id] }
+  const templateVars = { user: users[req.session.user_id] };
   res.render('login', templateVars);
 });
 
@@ -34,7 +34,7 @@ app.post('/login', (req, res) => {
   }
 
   if (!getUserByEmail(email, users)) {
-  return res.status(403).render('error_message', {message: 'Email not found. Please register for a new account.', url: req.header('Referer')});
+    return res.status(403).render('error_message', {message: 'Email not found. Please register for a new account.', url: req.header('Referer')});
   }
 
   const user = getUserByEmail(email, users);
@@ -52,10 +52,10 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const user = users[req.session.user_id] || "" ;
+  const user = users[req.session.user_id] || "";
   const urls = urlsForUser(req.session.user_id, urlDatabase);
   console.log(urls);
-  const templateVars = { 
+  const templateVars = {
     urls,
     user
   };
@@ -78,7 +78,7 @@ app.post('/urls', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const templateVars = { user: users[req.session.user_id]}
+  const templateVars = { user: users[req.session.user_id]};
   res.render('register', templateVars);
 });
 
@@ -88,7 +88,7 @@ app.post('/register', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-   return res.status(400).render('error_message', {message: "Please enter both email and password", url: req.header('Referer')});
+    return res.status(400).render('error_message', {message: "Please enter both email and password", url: req.header('Referer')});
   }
 
   if (getUserByEmail(email, users)) {
@@ -99,7 +99,7 @@ app.post('/register', (req, res) => {
     id,
     email,
     password : bcrypt.hashSync(password, 10)
-  }
+  };
   console.log("users", users);
   req.session.user_id = id;
   console.log(req.session.user_id);
@@ -111,7 +111,7 @@ app.get('/urls/new', (req, res) => {
   if (!req.session.user_id) {
     return res.redirect('/login');
   }
-  const templateVars = { user: users[req.session.user_id] }
+  const templateVars = { user: users[req.session.user_id] };
   res.render('urls_new', templateVars);
 });
 
