@@ -15,24 +15,8 @@ app.use(cookieSession({
 }));
 app.set('view engine', 'ejs');
 
-const urlDatabase = {
-  b6UTxQ: {
-      longURL: "https://www.tsn.ca",
-      userID: "aJ48lW"
-  },
-  i3BoGr: {
-      longURL: "https://www.google.ca",
-      userID: "aJ48lW"
-  }
-};
-
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: bcrypt.hashSync("purple-monkey-dinosaur", 10)
-  }
-};
+const urlDatabase = {};
+const users = {};
 
 app.get('/', (req, res) => {
   res.redirect('/urls');
