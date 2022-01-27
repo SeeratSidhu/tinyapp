@@ -10,6 +10,16 @@
 
 <body>
   <%- include('partials/_header') %>
+
+  <% if (!user) { %>
+    <div class="alert alert-info" role="alert">
+      Please <a href="/login" class="alert-link">Login</a> or <a href="/register" class="alert-link">Register</a> to view/edit URL.
+    </div>
+   <% } else if (!longURL) { %> 
+    <div class="alert alert-danger" role="alert">
+      Access Denied!
+    </div>
+    <% } else { %>
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
@@ -37,6 +47,7 @@
       </div>
       <div class="card-footer text-muted"></div>
     </div>
+    <% } %>
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

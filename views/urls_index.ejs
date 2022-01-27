@@ -11,6 +11,15 @@
 <body>
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
+    <% if (!user) { %>
+      <div class="alert alert-info" role="alert">
+        Please <a href="/login" class="alert-link">Login</a> or <a href="/register" class="alert-link">Register</a> to view/add URLs.
+      </div>
+    <% } else if (Object.keys(urls).length === 0) { %>
+      <div class="alert alert-info" role="alert">
+        All your URLs will be displayed here.<a href="/urls/new" class="alert-link">Start</a> adding URLs.
+      </div>
+    <% } else { %>  
     <h3>My URLs</h3>
     <table class="table">
       <thead>
@@ -25,7 +34,7 @@
         <% for(let url in urls) { %>
           <tr>
             <td><%= url %></td>
-            <td><%= urls[url].longURL %></td>
+            <td><%= urls[url] %></td>
             <td>
               <form method="GET" action= "/urls/<%= url %>"> 
                 <button type="submit" class="btn btn-outline-primary">Edit</button>
@@ -40,6 +49,7 @@
         <% } %>
       </tbody>
     </table>
+    <% } %>
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
