@@ -19,7 +19,7 @@ const urlDatabase = {};
 const users = {};
 
 app.get('/', (req, res) => {
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 app.get('/login', (req, res) => {
@@ -130,8 +130,11 @@ app.get('/urls/:shortURL', (req, res) => {
 //update the longURL for a given shortURL
 app.post('/urls/:shortURL', (req, res) => {
   const urls = urlsForUser(req.session.user_id, urlDatabase);
+  if (!req.body.longURL) {
+    return res.send("Please enter a URL to update");
+  }
   if (!urls[req.params.shortURL]) {
-    return res.status(403).send("Access Denied!");
+    return res.status(403).send("Oops! 🚫You cannot update this URL!🚫");
   }
   urlDatabase[req.params.shortURL] = {
     longURL: req.body.longURL,
@@ -143,7 +146,7 @@ app.post('/urls/:shortURL', (req, res) => {
 app.post('/urls/:shortURL/delete', (req, res) => {
   const urls = urlsForUser(req.session.user_id, urlDatabase);
   if (!urls[req.params.shortURL]) {
-    return res.status(403).send("Access Denied!");
+    return res.status(403).send("Oops! 🚫You cannot delete this URL!🚫");
   }
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
