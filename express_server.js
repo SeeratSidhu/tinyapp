@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
 
 const app = express();
 const PORT = 8080;
@@ -183,31 +184,3 @@ app.get('/urls.json', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
-
-//helper functions
-function generateRandomString() {
-  return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
-};
-
-function getUserByEmail(email, database) {
-  for (let user_id in database) {
-    const userEmail = database[user_id].email;
-    if (userEmail === email) {
-      return users[user_id];
-    }
-  }
-  return false;
-};
-
-function urlsForUser(id, database) {
-  let output = {};
-
-  for (let url_id in database) {
-    let user_id = database[url_id].userID;
-    if (user_id === id) {
-      output[url_id] = database[url_id].longURL;
-    }
-  }
-
-  return output;
-};
