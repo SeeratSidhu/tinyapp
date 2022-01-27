@@ -46,7 +46,7 @@ app.post('/login', (req, res) => {
   }
 
   const user = emailLookup(email);
-  if ( user.password !== password) {
+  if (! bcrypt.compareSync(password, user.password)) {
     return res.status(403).send('Incorrect password!');
   }
   res.cookie('user_id', user.id);
