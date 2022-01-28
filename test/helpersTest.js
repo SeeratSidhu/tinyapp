@@ -48,13 +48,13 @@ describe('generateRandomString', () => {
 
 describe('urlsForUser', () => {
   it('should return long urls corresponding to the user with given userid', () => {
-    const urls = urlsForUser("aJ48lW", testUrls);
-    const expectedUrlID = "i3BoGr";
+    const urls = urlsForUser('aJ48lW', testUrls);
+    const expectedUrlID = 'i3BoGr';
     expect(urls[expectedUrlID]).to.equal(testUrls[expectedUrlID].longURL);
   });
 
-  it("should return empty object if no url are found", () => {
-    const urls = urlsForUser("abd652", testUrls);
+  it('should return empty object if no url are found', () => {
+    const urls = urlsForUser('abd652', testUrls);
     expect(urls).to.deep.equal({});
   });
 });

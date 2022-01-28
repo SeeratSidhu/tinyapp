@@ -11,7 +11,7 @@ const PORT = 8080;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
-  keys: ["S1mpl!city-k3y", "key2"]
+  keys: ['S1mpl!city-k3y', 'key2']
 }));
 app.set('view engine', 'ejs');
 
@@ -34,7 +34,7 @@ app.post('/login', (req, res) => {
 
   //check credentials before login
   if (!email || !password) {
-    return res.status(400).render('error_message', {message: "Please enter both email and password", url: req.header('Referer')});
+    return res.status(400).render('error_message', {message: 'Please enter both email and password', url: req.header('Referer')});
   }
 
   if (!getUserByEmail(email, users)) {
@@ -83,7 +83,7 @@ app.get('/urls/new', (req, res) => {
 //on Submit, add the new shortURL and it's corresponding longURL/userID to the database
 app.post('/urls', (req, res) => {
   if (!req.session.user_id) {
-    return res.status(403).send("Please login to add a new URL");
+    return res.status(403).send('Please login to add a new URL');
   }
 
   const shortURL = generateRandomString();
@@ -108,11 +108,11 @@ app.post('/register', (req, res) => {
 
   //handle user errors
   if (!email || !password) {
-    return res.status(400).render('error_message', {message: "Please enter both email and password", url: req.header('Referer')});
+    return res.status(400).render('error_message', {message: 'Please enter both email and password', url: req.header('Referer')});
   }
 
   if (getUserByEmail(email, users)) {
-    return res.status(400).render('error_message', {message: "This email already exists!", url: req.header('Referer')});
+    return res.status(400).render('error_message', {message: 'This email already exists!', url: req.header('Referer')});
   }
 
   //on successful registration, update database
@@ -150,11 +150,11 @@ app.post('/urls/:shortURL', (req, res) => {
 
   //handle user authentication
   if (!urls[req.params.shortURL]) {
-    return res.status(403).send("Oops! 🚫You cannot update this URL!🚫");
+    return res.status(403).send('Oops! 🚫You cannot update this URL!🚫');
   }
 
   if (!req.body.longURL) {
-    return res.render("error_message", {message: "Please enter a URL to update", url: req.header('Referer')});
+    return res.render('error_message', {message: 'Please enter a URL to update', url: req.header('Referer')});
   }
 
   urlDatabase[req.params.shortURL] = {
@@ -171,7 +171,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
   //handle authentication
   if (!urls[req.params.shortURL]) {
-    return res.status(403).send("Oops! 🚫You cannot delete this URL!🚫");
+    return res.status(403).send('Oops! 🚫You cannot delete this URL!🚫');
   }
 
   delete urlDatabase[req.params.shortURL];
